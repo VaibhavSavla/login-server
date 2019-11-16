@@ -1,0 +1,11 @@
+{
+    "delay": 2000,
+    "env": {
+        "PORTAL_PORT": "3003"
+    },
+    "exec": "node ./src/server.js",
+    "ext": "js",
+    "ignore": [],
+    "verbose": true,
+    "watch": ["src"]
+}

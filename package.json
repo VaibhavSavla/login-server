@@ -1,0 +1,33 @@
+{
+  "name": "login-server",
+  "version": "1.0.0",
+  "description": "A small Node.js application for authentication using email+password and mobile+otp",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --config nodemon.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VaibhavSavla/login-server.git"
+  },
+  "author": "Vaibhav Savla",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VaibhavSavla/login-server/issues"
+  },
+  "homepage": "https://github.com/VaibhavSavla/login-server#readme",
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "morgan": "^1.9.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "nodemon": "^1.19.4"
+  }
+}
