@@ -15,11 +15,7 @@ authApis.get('/logout', (req, res) => {
 });
 
 authApis.post('/register', async (req, res) => {
-  const { email, password } = req.body;
-  const user = new User({
-    email,
-    password,
-  });
+  const user = new User(req.body);
 
   try {
     await user.save();
