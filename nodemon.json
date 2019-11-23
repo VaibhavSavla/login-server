@@ -2,7 +2,7 @@
   "delay": 2000,
   "env": {
     "PORTAL_PORT": "3003",
-    "MONGO_URL": "mongodb://admin:admin@localhost:27017/loginApp"
+    "MONGO_URL": "mongodb://vaibhav99:m%40ngo123@3.132.213.63:27017/loginApp"
   },
   "exec": "node ./src/server.js",
   "ext": "js",
