@@ -8,9 +8,9 @@ module.exports = function localStrategy() {
       usernameField: 'username',
       passwordField: 'password',
     }, async (username, password, done) => {
-      const user = await Auth.findOne({ username, password });
-      if (user) {
-        done(null, user);
+      const { userId, expiry } = await Auth.findOne({ username, password }) || {};
+      if (userId && (!expiry || expiry > Date.now())) {
+        done(null, { userId });
       } else {
         done(null, false);
       }

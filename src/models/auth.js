@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
 
-const Auth = mongoose.model('AuthEmail', {
-  userId: {
-    type: String,
-    required: [true, 'User Id is required'],
-  },
+const Auth = mongoose.model('Auth', {
+  userId: String,
   username: {
     type: String,
     required: [true, 'Username is required'],
@@ -13,6 +10,7 @@ const Auth = mongoose.model('AuthEmail', {
     type: String,
     required: [true, 'Password is requierd'],
   },
+  expiry: Number,
 });
 
 module.exports = {
