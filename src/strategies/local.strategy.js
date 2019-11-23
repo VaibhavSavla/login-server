@@ -1,17 +1,16 @@
 const passport = require('passport');
 const { Strategy } = require('passport-local');
-const { User } = require('../models/user');
+const { Auth } = require('../models/auth');
 
 module.exports = function localStrategy() {
   passport.use(new Strategy(
     {
-      usernameField: 'email',
+      usernameField: 'username',
       passwordField: 'password',
-    }, async (email, password, done) => {
-      const user = { email, password };
-      const isValid = await User.exists(user);
-      if (isValid) {
-        done(null, user);
+    }, async (username, password, done) => {
+      const { userId, expiry } = await Auth.findOne({ username, password }) || {};
+      if (userId && (!expiry || expiry > Date.now())) {
+        done(null, { userId });
       } else {
         done(null, false);
       }
