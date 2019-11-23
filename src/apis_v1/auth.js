@@ -1,7 +1,12 @@
 const express = require('express');
 const passport = require('passport');
+const uuid = require('uuid/v4');
+const axios = require('axios');
 
+const { Auth } = require('../models/auth');
 const { User } = require('../models/user');
+const { validateOtp, generateOtp } = require('../utils/utils');
+const { SMS_API_KEY, OTP_NUM_DIGITS, OTP_EXPIRY } = require('../utils/env');
 
 const authApis = express.Router();
 
@@ -15,11 +20,43 @@ authApis.get('/logout', (req, res) => {
 });
 
 authApis.post('/register', async (req, res) => {
-  const user = new User(req.body);
+  const userId = uuid();
+  const {
+    email, password, method, firstName, lastName, mobile, otp,
+  } = req.body;
 
   try {
+    const validMethods = ['email', 'otp'];
+    if (!validMethods.includes(method)) {
+      res.status(400).send();
+      return;
+    }
+
+    const alreadyExists = await User.findOne().or([{ email: email || 'N/A' }, { mobile: mobile || 'N/A' }]);
+    if (alreadyExists) {
+      res.status(400).send({ error: 'ERR_ALREADY_EXISTS' });
+      return;
+    }
+
+    if (method === 'email') {
+      if (!email || !password) { res.status(400).send(); return; }
+      const auth = new Auth({ userId, username: email, password });
+      await auth.save();
+    }
+
+    if (method === 'otp') {
+      if (!mobile || !otp) { res.status(400).send(); return; }
+      if (!validateOtp(mobile, otp)) {
+        res.status(401).send();
+        return;
+      }
+    }
+
+    const user = new User({
+      userId, firstName, lastName, email, mobile,
+    });
     await user.save();
-    req.login(req.body, () => {
+    req.login({ userId }, () => {
       res.status(200).send();
     });
   } catch (err) {
@@ -27,11 +64,18 @@ authApis.post('/register', async (req, res) => {
   }
 });
 
-authApis.get('/profile', (req, res) => {
-  if (req.user) {
-    res.send(req.user);
-  } else {
-    res.status(401).send();
+authApis.get('/sendOtp/:mobile', async (req, res) => {
+  const { mobile } = req.params;
+  try {
+    const otp = generateOtp(OTP_NUM_DIGITS);
+    const auth = { username: mobile, password: otp, expiry: Date.now() + Number(OTP_EXPIRY) };
+    await Auth.findOneAndUpdate({ username: mobile }, auth, { upsert: true });
+    // const smsUrl = `http://2factor.in/API/V1/${SMS_API_KEY}/SMS/${mobile}/${otp}`;
+    const smsUrl = 'http://www.mocky.io/v2/5dd9691a32000094009a87b9';
+    const response = axios.get(smsUrl);
+    res.send(response.data);
+  } catch (err) {
+    res.status(err.status || 500).send(err);
   }
 });
 
