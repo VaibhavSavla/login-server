@@ -1,6 +1,8 @@
 const express = require('express');
 const passport = require('passport');
+const uuid = require('uuid/v4');
 
+const { Auth } = require('../models/auth');
 const { User } = require('../models/user');
 
 const authApis = express.Router();
@@ -15,9 +17,23 @@ authApis.get('/logout', (req, res) => {
 });
 
 authApis.post('/register', async (req, res) => {
-  const user = new User(req.body);
+  const userId = uuid();
+
+  const auth = new Auth({
+    userId,
+    username: req.body.username,
+    password: req.body.password,
+  });
+
+  const user = new User({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    mobile: req.body.mobile,
+  });
 
   try {
+    await auth.save();
     await user.save();
     req.login(req.body, () => {
       res.status(200).send();
@@ -27,12 +43,8 @@ authApis.post('/register', async (req, res) => {
   }
 });
 
-authApis.get('/profile', (req, res) => {
-  if (req.user) {
-    res.send(req.user);
-  } else {
-    res.status(401).send();
-  }
+authApis.get('/sendOtp/:mobile', async (req, res) => {
+  const { mobile } = req.params;
 });
 
 module.exports = authApis;
