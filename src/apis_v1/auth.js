@@ -34,7 +34,7 @@ authApis.post('/register', async (req, res) => {
 
     const alreadyExists = await User.findOne().or([{ email: email || 'N/A' }, { mobile: mobile || 'N/A' }]);
     if (alreadyExists) {
-      res.status(400).send({ error: 'ERR_ALREADY_EXISTS' });
+      res.status(400).send({ error: 'ERR_ALREADY_EXISTS', alreadyExists });
       return;
     }
 
