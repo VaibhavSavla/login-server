@@ -37,7 +37,7 @@ app.listen(CONSTANTS.PORTAL_PORT, () => {
 process.on('unhandledRejection', (reason, p) => {
   logErrorHeading('Unhandled Rejection');
   logError(reason, p);
-  process.exit(1);
+  // process.exit(1);
 });
 
 process.on('uncaughtException', (reason, p) => {
