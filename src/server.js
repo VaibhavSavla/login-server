@@ -43,5 +43,5 @@ process.on('unhandledRejection', (reason, p) => {
 process.on('uncaughtException', (reason, p) => {
   logErrorHeading('Uncaught Exception');
   logError(reason, p);
-  process.exit(1);
+  // process.exit(1);
 });
