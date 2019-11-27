@@ -46,7 +46,8 @@ authApis.post('/register', async (req, res) => {
 
     if (method === 'otp') {
       if (!mobile || !otp) { res.status(400).send(); return; }
-      if (!validateOtp(mobile, otp)) {
+      const isValid = await validateOtp(mobile, otp);
+      if (!isValid) {
         res.status(401).send();
         return;
       }
@@ -70,8 +71,7 @@ authApis.get('/sendOtp/:mobile', async (req, res) => {
     const otp = generateOtp(OTP_NUM_DIGITS);
     const auth = { username: mobile, password: otp, expiry: Date.now() + Number(OTP_EXPIRY) };
     await Auth.findOneAndUpdate({ username: mobile }, auth, { upsert: true });
-    // const smsUrl = `http://2factor.in/API/V1/${SMS_API_KEY}/SMS/${mobile}/${otp}`;
-    const smsUrl = 'http://www.mocky.io/v2/5dd9691a32000094009a87b9';
+    const smsUrl = `http://2factor.in/API/V1/${SMS_API_KEY}/SMS/${mobile}/${otp}`;
     const response = axios.get(smsUrl);
     res.send(response.data);
   } catch (err) {
