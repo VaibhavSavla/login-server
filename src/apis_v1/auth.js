@@ -72,7 +72,7 @@ authApis.get('/sendOtp/:mobile', async (req, res) => {
   try {
     const otp = generateOtp(OTP_NUM_DIGITS);
     const auth = { username: mobile, password: otp, expiry: Date.now() + Number(OTP_EXPIRY) };
-    await Auth.findOneAndUpdate({ username: mobile }, auth);
+    await Auth.findOneAndUpdate({ username: mobile }, auth, { upsert: true });
     const smsUrl = `http://2factor.in/API/V1/${SMS_API_KEY}/SMS/${mobile}/${otp}`;
     await axios.get(smsUrl);
     res.send();
